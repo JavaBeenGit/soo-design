@@ -8,6 +8,7 @@
 
 <ul>
     <li><a href="health">/health 서블릿 테스트</a></li>
+    <li><a href="/db-health">/db-health DB연결 테스트!</a></li>
 </ul>
 
 </body>
