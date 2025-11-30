@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:mybatis="http://mybatis.org/schema/mybatis-spring"
+       xsi:schemaLocation="
+           http://www.springframework.org/schema/beans
+           https://www.springframework.org/schema/beans/spring-beans.xsd
+           http://www.springframework.org/schema/context
+           https://www.springframework.org/schema/context/spring-context.xsd
+           http://mybatis.org/schema/mybatis-spring
+           https://mybatis.org/schema/mybatis-spring.xsd">
+
+    <bean id="propertyConfigurer"
+          class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+
+	    <property name="location" value="classpath:globals.properties"/>
+        <property name="ignoreUnresolvablePlaceholders" value="false"/>
+    </bean>
+
+    <!-- 2) DataSource 설정 (DBCP2 예시) -->
+    <bean id="dataSource" class="org.apache.commons.dbcp2.BasicDataSource"
+          destroy-method="close">
+        <property name="driverClassName" value="${db.driver}"/>
+        <property name="url"             value="${db.url}"/>
+        <property name="username"        value="${db.username}"/>
+        <property name="password"        value="${db.password}"/>
+
+        <!-- 옵션: 풀 사이즈 등 -->
+        <property name="initialSize" value="3"/>
+        <property name="maxTotal"    value="20"/>
+    </bean>
+
+    <!-- 3) MyBatis SqlSessionFactoryBean -->
+    <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <property name="dataSource" ref="dataSource"/>
+        <!-- 위에서 만든 mybatis-config.xml 사용 -->
+        <property name="configLocation" value="classpath:mybatis-config.xml"/>
+        <!-- 매퍼 xml 위치 지정 (예: src/main/resources/mapper/...) -->
+        <property name="mapperLocations" value="classpath*:mapper/**/*.xml"/>
+    </bean>
+
+    <!-- 4) SqlSessionTemplate (필요하다면) -->
+    <bean id="sqlSessionTemplate" class="org.mybatis.spring.SqlSessionTemplate">
+        <constructor-arg index="0" ref="sqlSessionFactory"/>
+    </bean>
+</beans>
